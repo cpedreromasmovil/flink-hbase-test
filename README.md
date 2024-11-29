@@ -14,8 +14,12 @@ make load-hbase-data
 make down
 ```
 
-After star all containers, you can access to the following services:
-
+After star all containers, you can access to flink sql sheel with the following command:
+```beam.assembly
+docker exec -it jobmanager bash
+/opt/flink/bin/sql-client.sh embedded
+```
+And run a test query:
 ```beam.assembly
 CREATE TABLE blacklist (
  rowkey INT,
@@ -27,5 +31,5 @@ CREATE TABLE blacklist (
  'zookeeper.quorum' = 'zookeeper:2181'
 );
 
-select * from blacklist;
+select rowkey from blacklist;
 ```
