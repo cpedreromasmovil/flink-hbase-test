@@ -1,0 +1,64 @@
+version: '3.8'
+
+networks:
+  flink-network:
+    driver: bridge
+
+services:
+  zookeeper:
+    image: wurstmeister/zookeeper:latest
+    container_name: zookeeper
+    networks:
+      - flink-network
+    ports:
+      - "2181:2181"
+
+  hbase:
+    image: blueskyareahm/hbase-base:2.1.3
+    container_name: hbase
+    command: master
+    networks:
+      - flink-network
+    ports:
+      - "16000:16000"
+      - "16010:16010"
+      - "16201:16201"
+      - "16301:16301"
+    environment:
+      - HBASE_ZOOKEEPER_QUORUM=zookeeper:2181
+      - HBASE_MANAGES_ZK=false
+    depends_on:
+      - zookeeper
+    volumes:
+      - ./init-script.hbase:/init-script.hbase
+
+  jobmanager:
+    build:
+      context: ./flinkbase
+    container_name: jobmanager
+    networks:
+      - flink-network
+    ports:
+      - "8081:8081"
+      - "6123:6123"
+    command: jobmanager
+    environment:
+      - "FLINK_PROPERTIES=jobmanager.rpc.address:jobmanager"
+    volumes:
+      - ./init-script.flink:/init-script.flink
+    depends_on:
+      - zookeeper
+      - hbase
+
+  taskmanager:
+    build:
+      context: ./flinkbase  
+    container_name: taskmanager
+    networks:
+      - flink-network
+    command: taskmanager
+    environment:
+      - "FLINK_PROPERTIES=jobmanager.rpc.address:jobmanager"
+    depends_on:
+      - jobmanager
+      - hbase

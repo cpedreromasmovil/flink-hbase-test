@@ -1,0 +1,7 @@
+create 'blacklist', 'imeis'
+create 'whitelist', 'imsis'
+put 'blacklist', '123456789012345', 'imeis:key', '123456789012345'
+put 'blacklist', '123456789012345', 'imeis:blacklisted', 'true'
+
+put 'whitelist', '214030', 'imsis:omv', 'orange'
+put 'whitelist', '214030', 'imsis:key', '214030'
