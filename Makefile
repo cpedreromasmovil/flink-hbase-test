@@ -1,9 +1,12 @@
 .PHONY: down
 down:
-	docker-compose down -v --remove-orphans
+	DOCKER_DEFAULT_PLATFORM=linux/amd64 docker-compose down -v --remove-orphans
+.PHONY: build
+build:
+	DOCKER_DEFAULT_PLATFORM=linux/amd64 docker-compose build
 .PHONY: up
 up:
-	docker-compose up -d
+	DOCKER_DEFAULT_PLATFORM=linux/amd64 docker-compose up -d
 .PHONY: load-hbase-data
 load-hbase-data:
-	docker exec hbase sh -c "hbase shell /init-script.hbase"
+	DOCKER_DEFAULT_PLATFORM=linux/amd64 docker exec hbase sh -c "hbase shell /init-script.hbase"

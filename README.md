@@ -4,6 +4,7 @@ This is a docker compose file to run hbase, zookeeper and flink in a single node
 For running the compose file, you need to have docker and docker-compose installed in your machine.
 Start all containers with the following command:
 ```beam.assembly
+make build
 make up
 ```
 For load data in hbase after start all containers, you can run the following command:
