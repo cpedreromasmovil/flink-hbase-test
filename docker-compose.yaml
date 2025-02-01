@@ -1,5 +1,3 @@
-version: '3.8'
-
 networks:
   flink-network:
     driver: bridge
@@ -13,24 +11,68 @@ services:
     ports:
       - "2181:2181"
 
-  hbase:
-    image: blueskyareahm/hbase-base:2.1.3
-    container_name: hbase
-    command: master
+#  hbase:
+#    image: blueskyareahm/hbase-base:2.1.3
+#    container_name: hbase
+#    command: master
+#    networks:
+#      - flink-network
+#    ports:
+#      - "16000:16000"
+#      - "16010:16010"
+#      - "16201:16201"
+#      - "16301:16301"
+#    environment:
+#      - HBASE_ZOOKEEPER_QUORUM=zookeeper:2181
+#      - HBASE_MANAGES_ZK=false
+#    depends_on:
+#      - zookeeper
+#    volumes:
+#      - ./init-script.hbase:/init-script.hbase
+
+
+  hbase-master:
+    build:
+      context: ./hbase
+      dockerfile: Dockerfile
+    container_name: hbase-master
     networks:
       - flink-network
     ports:
-      - "16000:16000"
+      - "16000:16000"  # Puerto de servicio del HBase Master
       - "16010:16010"
-      - "16201:16201"
-      - "16301:16301"
+    volumes:
+      - ./init-script.hbase:/init-script.hbase
+      - ./hbase/hbase-site.xml:/opt/hbase/conf/hbase-site.xml
     environment:
       - HBASE_ZOOKEEPER_QUORUM=zookeeper:2181
       - HBASE_MANAGES_ZK=false
+      - HBASE_CONF_DIR=/opt/hbase/conf
     depends_on:
       - zookeeper
+      - hbase-region
+    command: [ "hbase", "master", "start" ]
+
+  hbase-region:
+    build:
+      context: ./hbase
+      dockerfile: Dockerfile
+    container_name: hbase-region
+    networks:
+      - flink-network
+    ports:
+      - "16020:16020"  # Puerto de servicio del HBase RegionServer
+      - "16030:16030"
     volumes:
-      - ./init-script.hbase:/init-script.hbase
+    - ./init-script.hbase:/init-script.hbase
+    - ./hbase/hbase-site.xml:/opt/hbase/conf/hbase-site.xml
+    environment:
+      - HBASE_ZOOKEEPER_QUORUM=zookeeper:2181
+      - HBASE_MANAGES_ZK=false
+      - HBASE_CONF_DIR=/opt/hbase/conf
+    depends_on:
+      - zookeeper
+    command: ["hbase", "regionserver", "start"]
 
   jobmanager:
     build:
@@ -44,11 +86,9 @@ services:
     command: jobmanager
     environment:
       - "FLINK_PROPERTIES=jobmanager.rpc.address:jobmanager"
-    volumes:
-      - ./init-script.flink:/init-script.flink
     depends_on:
       - zookeeper
-      - hbase
+      - hbase-master
 
   taskmanager:
     build:
@@ -61,4 +101,4 @@ services:
       - "FLINK_PROPERTIES=jobmanager.rpc.address:jobmanager"
     depends_on:
       - jobmanager
-      - hbase
+      - hbase-master
