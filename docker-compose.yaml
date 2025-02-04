@@ -11,73 +11,32 @@ services:
     ports:
       - "2181:2181"
 
-#  hbase:
-#    image: blueskyareahm/hbase-base:2.1.3
-#    container_name: hbase
-#    command: master
-#    networks:
-#      - flink-network
-#    ports:
-#      - "16000:16000"
-#      - "16010:16010"
-#      - "16201:16201"
-#      - "16301:16301"
-#    environment:
-#      - HBASE_ZOOKEEPER_QUORUM=zookeeper:2181
-#      - HBASE_MANAGES_ZK=false
-#    depends_on:
-#      - zookeeper
-#    volumes:
-#      - ./init-script.hbase:/init-script.hbase
-
-
-  hbase-master:
+  hbase:
     build:
       context: ./hbase
       dockerfile: Dockerfile
-    container_name: hbase-master
+    container_name: hbase
+    command: "/opt/hbase/bin/hbase master start"
     networks:
       - flink-network
     ports:
-      - "16000:16000"  # Puerto de servicio del HBase Master
+      - "16000:16000"
       - "16010:16010"
+    environment:
+      - JAVA_HOME=/usr/local/openjdk-8
+      - HBASE_ZOOKEEPER_QUORUM=zookeeper:2181
+      - HBASE_MANAGES_ZK=false
     volumes:
       - ./init-script.hbase:/init-script.hbase
       - ./hbase/hbase-site.xml:/opt/hbase/conf/hbase-site.xml
-    environment:
-      - HBASE_ZOOKEEPER_QUORUM=zookeeper:2181
-      - HBASE_MANAGES_ZK=false
-      - HBASE_CONF_DIR=/opt/hbase/conf
     depends_on:
       - zookeeper
-      - hbase-region
-    command: [ "hbase", "master", "start" ]
-
-  hbase-region:
-    build:
-      context: ./hbase
-      dockerfile: Dockerfile
-    container_name: hbase-region
-    networks:
-      - flink-network
-    ports:
-      - "16020:16020"  # Puerto de servicio del HBase RegionServer
-      - "16030:16030"
-    volumes:
-    - ./init-script.hbase:/init-script.hbase
-    - ./hbase/hbase-site.xml:/opt/hbase/conf/hbase-site.xml
-    environment:
-      - HBASE_ZOOKEEPER_QUORUM=zookeeper:2181
-      - HBASE_MANAGES_ZK=false
-      - HBASE_CONF_DIR=/opt/hbase/conf
-    depends_on:
-      - zookeeper
-    command: ["hbase", "regionserver", "start"]
 
   jobmanager:
     build:
       context: ./flinkbase
     container_name: jobmanager
+    mem_limit: 4g
     networks:
       - flink-network
     ports:
@@ -88,12 +47,13 @@ services:
       - "FLINK_PROPERTIES=jobmanager.rpc.address:jobmanager"
     depends_on:
       - zookeeper
-      - hbase-master
+      - hbase
 
   taskmanager:
     build:
-      context: ./flinkbase  
+      context: ./flinkbase
     container_name: taskmanager
+    mem_limit: 4g
     networks:
       - flink-network
     command: taskmanager
@@ -101,4 +61,4 @@ services:
       - "FLINK_PROPERTIES=jobmanager.rpc.address:jobmanager"
     depends_on:
       - jobmanager
-      - hbase-master
+      - hbase

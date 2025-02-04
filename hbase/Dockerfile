@@ -1,25 +1,17 @@
-FROM openjdk:8-jdk-alpine
+FROM openjdk:8-jdk-slim
 
-# Define variables de entorno para HBase
-ENV HBASE_VERSION=1.2.0
+RUN apt-get update && apt-get install -y curl bash netcat
+
 ENV HBASE_HOME=/opt/hbase
 ENV JAVA_HOME=/usr
-# Descarga HBase desde el repositorio oficial de Cloudera
-RUN apk add --no-cache curl bash && \
-    curl -o /tmp/hbase.tar.gz \
-    https://archive.apache.org/dist/hbase/1.2.0/hbase-1.2.0-bin.tar.gz && \
-    tar -xzf /tmp/hbase.tar.gz -C /opt && \
-    mv /opt/hbase-1.2.0 /opt/hbase && \
-    rm /tmp/hbase.tar.gz
+ENV PATH ${HBASE_HOME}/bin:${PATH}
+ENV HBASE_VERSION=1.2.0
 
-# Añade HBase al PATH
-ENV PATH="$HBASE_HOME/bin:$PATH"
+RUN curl -L https://archive.apache.org/dist/hbase/${HBASE_VERSION}/hbase-${HBASE_VERSION}-bin.tar.gz | tar -xz -C /opt \
+    && mv /opt/hbase-${HBASE_VERSION} $HBASE_HOME
 
-# Expone puertos típicos de HBase
-EXPOSE 16000 16010 16030
-WORKDIR /
-#ADD entrypoint.sh /
-#RUN chmod +x entrypoint.sh
-#ENTRYPOINT ["/entrypoint.sh"]
-# Configuración por defecto: iniciar el master
-# CMD ["hbase", "master", "start"]
+WORKDIR ${HBASE_HOME}
+# ADD entrypoint.sh /
+# RUN chmod +x /entrypoint.sh
+# ENTRYPOINT "/entrypoint.sh"
+

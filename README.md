@@ -26,7 +26,7 @@ CREATE TABLE blacklist (
  imeis ROW<key STRING, blacklisted BOOLEAN>,
  PRIMARY KEY (rowkey) NOT ENFORCED
 ) WITH (
- 'connector' = 'hbase-2.2',
+ 'connector' = 'hbase-1.4',
  'table-name' = 'blacklist',
  'zookeeper.quorum' = 'zookeeper:2181'
 );

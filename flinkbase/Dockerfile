@@ -17,3 +17,6 @@ RUN curl https://repo1.maven.org/maven2/org/apache/commons/commons-configuration
 RUN curl -o /opt/flink/lib/flink-sql-connector-hbase-2.2-1.17.2.jar \
     https://repo.maven.apache.org/maven2/org/apache/flink/flink-sql-connector-hbase-2.2/1.17.2/flink-sql-connector-hbase-2.2-1.17.2.jar
 
+# RUN curl -o /opt/flink/lib/flink-connector-hbase-1.4_2.12-1.12.0.jar \
+#      https://repo.maven.apache.org/maven2/org/apache/flink/flink-connector-hbase-1.4_2.12/1.12.0/flink-connector-hbase-1.4_2.12-1.12.0.jar
+
