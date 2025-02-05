@@ -1,4 +1,5 @@
 FROM flink:1.20
+RUN apt-get update && apt-get install -y curl bash netcat iputils-ping
 
 WORKDIR /opt/flink/lib
 

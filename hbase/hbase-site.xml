@@ -20,23 +20,13 @@
         <value>2181</value>
     </property>
 
-<!--    <property>-->
-<!--        <name>hbase.master</name>-->
-<!--        <value>hbase-master:16000</value>-->
-<!--    </property>-->
-
-<!--    <property>-->
-<!--        <name>hbase.regionserver</name>-->
-<!--        <value>hbase-region:16020</value>-->
-<!--    </property>-->
-
     <property>
         <name>hbase.meta.cache.size</name>
         <value>100</value>
     </property>
+
     <property>
         <name>zookeeper.znode.parent</name>
         <value>/hbase</value>
     </property>
-
 </configuration>

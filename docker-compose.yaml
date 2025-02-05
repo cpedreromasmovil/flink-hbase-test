@@ -10,18 +10,25 @@ services:
       - flink-network
     ports:
       - "2181:2181"
+    environment:
+      - ZOO_TICK_TIME=2000
+      - ZOO_INIT_LIMIT=10
+      - ZOO_SYNC_LIMIT=5
+      - ZOO_MAX_SESSION_TIMEOUT=60000
 
   hbase:
     build:
       context: ./hbase
       dockerfile: Dockerfile
     container_name: hbase
-    command: "/opt/hbase/bin/hbase master start"
     networks:
       - flink-network
     ports:
       - "16000:16000"
       - "16010:16010"
+      - "16020:16020"
+      - "16030:16030"
+
     environment:
       - JAVA_HOME=/usr/local/openjdk-8
       - HBASE_ZOOKEEPER_QUORUM=zookeeper:2181
@@ -36,7 +43,6 @@ services:
     build:
       context: ./flinkbase
     container_name: jobmanager
-    mem_limit: 4g
     networks:
       - flink-network
     ports:
@@ -53,7 +59,6 @@ services:
     build:
       context: ./flinkbase
     container_name: taskmanager
-    mem_limit: 4g
     networks:
       - flink-network
     command: taskmanager

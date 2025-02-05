@@ -10,5 +10,3 @@ up:
 load-hbase-data:
 	docker exec hbase sh -c "hbase shell /init-script.hbase"
 .PHONY: init-region
-init-region:
-	docker exec hbase sh -c "hbase-daemon.sh start regionserver"
