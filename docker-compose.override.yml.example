@@ -1,0 +1,34 @@
+# Docker Compose Override Example
+# Copy this file to docker-compose.override.yml to customize your local environment
+# 
+# Example customizations:
+
+version: '3.8'
+
+services:
+  # Uncomment and modify to customize Flink JobManager
+  # jobmanager:
+  #   environment:
+  #     - FLINK_PROPERTIES=jobmanager.rpc.address:jobmanager
+  #       taskmanager.numberOfTaskSlots:4
+  #   volumes:
+  #     - ./custom-flink-conf:/opt/flink/conf
+  
+  # Uncomment and modify to customize HBase
+  # hbase:
+  #   environment:
+  #     - HBASE_HEAPSIZE=2G
+  #   volumes:
+  #     - hbase-data:/tmp/hbase
+  
+  # Uncomment to add additional debugging/monitoring
+  # adminer:
+  #   image: adminer
+  #   restart: always
+  #   ports:
+  #     - 8080:8080
+
+# Uncomment to add persistent volumes
+# volumes:
+#   hbase-data:
+#   zookeeper-data:

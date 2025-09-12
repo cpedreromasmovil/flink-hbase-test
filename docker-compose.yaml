@@ -10,6 +10,12 @@ services:
       - flink-network
     ports:
       - "2181:2181"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "2181"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   hbase:
     image: blueskyareahm/hbase-base:2.1.3
@@ -26,9 +32,17 @@ services:
       - HBASE_ZOOKEEPER_QUORUM=zookeeper:2181
       - HBASE_MANAGES_ZK=false
     depends_on:
-      - zookeeper
+      zookeeper:
+        condition: service_healthy
     volumes:
       - ./init-script.hbase:/init-script.hbase
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:16010"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
 
   jobmanager:
     build:
@@ -41,10 +55,19 @@ services:
       - "6123:6123"
     command: jobmanager
     environment:
-      - "FLINK_PROPERTIES=jobmanager.rpc.address:jobmanager"
+      - "FLINK_PROPERTIES=jobmanager.rpc.address: jobmanager"
     depends_on:
-      - zookeeper
-      - hbase
+      zookeeper:
+        condition: service_healthy
+      hbase:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
 
   taskmanager:
     build:
@@ -54,7 +77,8 @@ services:
       - flink-network
     command: taskmanager
     environment:
-      - "FLINK_PROPERTIES=jobmanager.rpc.address:jobmanager"
+      - "FLINK_PROPERTIES=jobmanager.rpc.address: jobmanager"
     depends_on:
-      - jobmanager
-      - hbase
+      jobmanager:
+        condition: service_healthy
+    restart: unless-stopped
