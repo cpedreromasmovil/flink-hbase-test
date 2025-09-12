@@ -48,7 +48,7 @@ services:
 
   taskmanager:
     build:
-      context: ./flinkbase  
+      context: ./flinkbase
     container_name: taskmanager
     networks:
       - flink-network
