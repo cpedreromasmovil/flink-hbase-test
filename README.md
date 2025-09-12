@@ -3,25 +3,25 @@
 This is a docker compose file to run hbase, zookeeper and flink in a single node cluster for testing purposes.
 For running the compose file, you need to have docker and docker-compose installed in your machine.
 Start all containers with the following command:
-```beam.assembly
+```bash
 make build
 make up
 ```
 For load data in hbase after start all containers, you can run the following command:
-```beam.assembly
+```bash
 make load-hbase-data
 ```
-```beam.assembly
+```bash
 make down
 ```
 
-After star all containers, you can access to flink sql sheel with the following command:
-```beam.assembly
+After start all containers, you can access to flink sql shell with the following command:
+```bash
 docker exec -it jobmanager bash
 /opt/flink/bin/sql-client.sh embedded
 ```
 And run a test query:
-```beam.assembly
+```sql
 CREATE TABLE blacklist (
  rowkey INT,
  imeis ROW<key STRING, blacklisted BOOLEAN>,
