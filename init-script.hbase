@@ -1,7 +1,19 @@
+# HBase initialization script
+# This script creates sample tables and populates them with test data
+
+# Create blacklist table for IMEI blacklisting
 create 'blacklist', 'imeis'
+
+# Create whitelist table for IMSI whitelisting  
 create 'whitelist', 'imsis'
+
+# Insert test data into blacklist table
 put 'blacklist', '123456789012345', 'imeis:key', '123456789012345'
 put 'blacklist', '123456789012345', 'imeis:blacklisted', 'true'
 
+# Insert test data into whitelist table
 put 'whitelist', '214030', 'imsis:omv', 'orange'
 put 'whitelist', '214030', 'imsis:key', '214030'
+
+# Display tables for verification
+list

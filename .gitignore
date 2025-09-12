@@ -1,1 +1,28 @@
+# IDE files
 .idea
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Docker volumes and logs
+docker-volumes/
+*.log
+
+# Build artifacts
+target/
+build/
+dist/
+
+# Temporary files
+tmp/
+*.tmp
+*.bak
+
+# Environment files
+.env
+.env.local
