@@ -1,7 +1,17 @@
+# Create tables
 create 'blacklist', 'imeis'
 create 'whitelist', 'imsis'
-put 'blacklist', '123456789012345', 'imeis:key', '123456789012345'
-put 'blacklist', '123456789012345', 'imeis:blacklisted', 'true'
 
-put 'whitelist', '214030', 'imsis:omv', 'orange'
-put 'whitelist', '214030', 'imsis:key', '214030'
+# Add sample data for blacklist table
+put 'blacklist', '1', 'imeis:key', '123456789012345'
+put 'blacklist', '1', 'imeis:blacklisted', 'true'
+put 'blacklist', '2', 'imeis:key', '123456789012346'
+put 'blacklist', '2', 'imeis:blacklisted', 'false'
+put 'blacklist', '3', 'imeis:key', '123456789012347'
+put 'blacklist', '3', 'imeis:blacklisted', 'true'
+
+# Add sample data for whitelist table
+put 'whitelist', '1', 'imsis:key', '214030'
+put 'whitelist', '1', 'imsis:omv', 'orange'
+put 'whitelist', '2', 'imsis:key', '214031'
+put 'whitelist', '2', 'imsis:omv', 'vodafone'
